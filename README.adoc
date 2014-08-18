@@ -1,0 +1,54 @@
+= beer-lover
+
+beer-lover application aims to solve programmer's problem with a drinks.
+
+== Installation and Getting Started
+To be able to start the tests of beer-lover you should have installed next applications:
+
+* http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html[Java SE Development Kit 7+]
+* http://maven.apache.org/download.cgi[Apache Maven 3]
+
+
+Here is a quick teaser of a complete beer-lover unit test:
+[source,java,indent=0]
+----
+package com.smartling;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import org.junit.Test;
+
+public class ProgrammerTest {
+
+    @Test
+    public void gotBeerAcceptanceTest() {
+        // create a programmer
+        Programmer programmer = new Programmer();
+        boolean gotBeer;
+
+        // must return true
+        gotBeer = programmer.gotBeer(6, 3, 1);
+        assertThat(gotBeer, equalTo(true));
+
+        // must return false
+        gotBeer = programmer.gotBeer(7, 3, 1);
+        assertThat(gotBeer, equalTo(false));
+
+        // must return true
+        gotBeer = programmer.gotBeer(6, 3, 2);
+        assertThat(gotBeer, equalTo(true));
+
+        // must return true
+        gotBeer = programmer.gotBeer(3, 0, 1);
+        assertThat(gotBeer, equalTo(true));
+
+        // must return false 
+        gotBeer = programmer.gotBeer(1, 0, 1);
+        assertThat(gotBeer, equalTo(false));
+
+        // must return true 
+        gotBeer = programmer.gotBeer(0, 0, 1);
+        assertThat(gotBeer, equalTo(true));
+    }
+}
+----
