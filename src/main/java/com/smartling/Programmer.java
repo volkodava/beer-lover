@@ -1,8 +1,5 @@
 package com.smartling;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -29,72 +26,48 @@ public class Programmer {
      * @throws IllegalArgumentException if the given amount of big bottles with
      * beer less then 0
      */
-    public boolean gotBeer(final int goalPints, int smallBottles, int bigBottles) {
+    public boolean gotBeer(int goalPints, int smallBottles, int bigBottles) {
         Validate.isTrue(goalPints >= 0, "Goal pints must be any positive integer or 0.");
         Validate.isTrue(smallBottles >= 0, "Number of small bottles must be any positive integer or 0.");
         Validate.isTrue(bigBottles >= 0, "Number of big bottles must be any positive integer or 0.");
 
+        // this one doesn't looking for the beers
         if (goalPints == 0) {
+            // so just make him happy
             return true;
         }
 
-        // init the condition verifier
-        Predicate<List<Integer>> conditionVerifier = new Predicate<List<Integer>>() {
-            @Override
-            public boolean test(List<Integer> pintValues) {
-                int sumOfConsumedPints = 0;
-                for (int pintValue : pintValues) {
-                    sumOfConsumedPints += pintValue;
-                    if (sumOfConsumedPints == goalPints) {
-                        return true;
-                    } else if (sumOfConsumedPints > goalPints) {
-                        return false;
-                    }
+        // try consume big bottles first
+        while (bigBottles > 0) {
+            goalPints -= NUM_OF_PINTS_IN_BIG_BOTTLE;
+            if (goalPints < 0) {
+                // revert back subtraction because we get out of bounds (completely drunk)
+                goalPints += NUM_OF_PINTS_IN_BIG_BOTTLE;
+                break;
+            }
+            bigBottles--;
+        }
+
+        // check if programmer wants more
+        if (goalPints > 0) {
+            // try consume small bottles if something remains after the first step
+            while (smallBottles > 0) {
+                goalPints -= NUM_OF_PINTS_IN_SMALL_BOTTLE;
+                if (goalPints == 0) {
+                    // meet the goal
+                    break;
                 }
-
-                return false;
-            }
-        };
-
-        int numOfBottles = smallBottles + bigBottles;
-        List<Integer> pintValues = new ArrayList<Integer>(numOfBottles);
-
-        // fill in list with pint values
-        for (int i = 0; i < smallBottles; i++) {
-            pintValues.add(NUM_OF_PINTS_IN_SMALL_BOTTLE);
-        }
-        for (int i = 0; i < bigBottles; i++) {
-            pintValues.add(NUM_OF_PINTS_IN_BIG_BOTTLE);
-        }
-
-        // try consume the beers
-        boolean result = tryConsume(goalPints, pintValues, conditionVerifier);
-        return result;
-    }
-
-    protected boolean tryConsume(int goalPints, List<Integer> pintValues, Predicate<List<Integer>> conditionVerifier) {
-        return tryConsume(pintValues, 0, conditionVerifier);
-    }
-
-    protected boolean tryConsume(List<Integer> pintValues, int offset, Predicate<List<Integer>> conditionVerifier) {
-        for (int i = offset; i < pintValues.size(); i++) {
-            Collections.swap(pintValues, i, offset);
-            boolean conditionMet = tryConsume(pintValues, offset + 1, conditionVerifier);
-            // swap back to protect from repeating values
-            Collections.swap(pintValues, offset, i);
-
-            if (conditionMet) {
-                return true;
+                smallBottles--;
             }
         }
 
-        if (offset == pintValues.size() - 1) {
-            boolean conditionMet = conditionVerifier.test(pintValues);
-            if (conditionMet) {
-                return true;
-            }
+        if (goalPints == 0) {
+            // we can get the desired amount of beers by choosing from the given bottles
+            return true;
         }
 
+        // sadly we can't get the desired amount, because some pints remain...
+        // has to run to the store to buy some more bottles...
         return false;
     }
 }
