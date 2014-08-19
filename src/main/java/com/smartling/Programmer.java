@@ -54,7 +54,7 @@ public class Programmer {
             while (smallBottles > 0) {
                 goalPints -= NUM_OF_PINTS_IN_SMALL_BOTTLE;
                 if (goalPints == 0) {
-                    // meet the goal
+                    // goal is achieved
                     break;
                 }
                 smallBottles--;
