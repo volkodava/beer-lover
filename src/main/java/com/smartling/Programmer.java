@@ -37,37 +37,14 @@ public class Programmer {
             return true;
         }
 
-        // try consume big bottles first
-        while (bigBottles > 0) {
-            goalPints -= NUM_OF_PINTS_IN_BIG_BOTTLE;
-            if (goalPints < 0) {
-                // revert back subtraction because we get out of bounds (completely drunk)
-                goalPints += NUM_OF_PINTS_IN_BIG_BOTTLE;
-                break;
-            }
-            bigBottles--;
-        }
+        int bigBottleVolume = bigBottles * NUM_OF_PINTS_IN_BIG_BOTTLE;
 
-        // check if programmer wants more
-        if (goalPints > 0) {
-            // try consume small bottles if something remains after the first step
-            while (smallBottles > 0) {
-                goalPints -= NUM_OF_PINTS_IN_SMALL_BOTTLE;
-                if (goalPints == 0) {
-                    // goal is achieved
-                    break;
-                }
-                smallBottles--;
-            }
-        }
-
-        if (goalPints == 0) {
-            // we can get the desired amount of beers by choosing from the given bottles
+        int remains = goalPints % NUM_OF_PINTS_IN_BIG_BOTTLE;
+        remains += ((goalPints - remains) / bigBottleVolume) + remains;
+        if (remains == 1) {
             return true;
         }
 
-        // sadly we can't get the desired amount, because some pints remain...
-        // has to run to the store to buy some more bottles...
-        return false;
+        return remains - smallBottles <= 0;
     }
 }
